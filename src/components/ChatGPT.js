@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import axios from 'axios';
 function ChatGPT(){
 
-    const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
   const timeoutRef = useRef(null);
 

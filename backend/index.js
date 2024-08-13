@@ -11,10 +11,9 @@ app.use(cors());
 app.use(express.json());
 
 const { Configuration, OpenAI } = require("openai");
-
+const Anthropic = require('@anthropic-ai/sdk');
 // import OpenAI from 'openai';
 
-console.log(process.env.OPENAI_API_KEY);
 // const configuration = new Configuration({
 //   apiKey: process.env.OPENAI_API_KEY,
 // });
@@ -34,6 +33,40 @@ app.post('/api/chatgpt', async (req, res) =>{
   console.log(chatCompletion.choices[0].message);
   res.json({ reply: chatCompletion.choices[0].message.content });
 })
+
+app.post('/api/claude', async (req, res) => {
+  const { prompt } = req.body;
+  const anthropic = new Anthropic({
+    // defaults to process.env["ANTHROPIC_API_KEY"]
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+
+  (async () => {
+  try {
+    const msg = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-20240620",
+      max_tokens: 1000,
+      temperature: 0,
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: prompt,
+            },
+          ],
+        },
+      ],
+    });
+
+    console.log(msg);
+    res.json({reply: msg.content[0]})
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
+})()
+});
 
 app.get('/api', (req, res) => {
   res.json({ message: 'Hello from the server!' });
