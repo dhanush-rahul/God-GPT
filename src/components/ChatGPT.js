@@ -1,12 +1,19 @@
 import React, {useState, useRef, useEffect} from 'react';
 import axios from 'axios';
-function ChatGPT(){
+function ChatGPT({inputText}){
 
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
   const timeoutRef = useRef(null);
 
-  const handleSend = () => {
+  useEffect(()=>{
+    if(inputText){
+      setPrompt(inputText);
+    }
+  },[inputText]);
+  useEffect(() => {
+    if(prompt)
+    {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -21,22 +28,14 @@ function ChatGPT(){
         setResponse('Something went wrong. Please try again.');
       }
     }, 1000); // Debounce delay of 1 second
-  };
+    }
+  },[prompt]);
 
   return (
     <div>
-      <h1>Chat with GPT</h1>
-      <textarea
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
-        placeholder="Type your message here..."
-      />
-      <button onClick={handleSend}>Send</button>
-      <div>
-        <h3>Response:</h3>
+      <p>{prompt}</p>
         <p>{response}</p>
-      </div>
-    </div>
+        </div>
   );
 }
 
